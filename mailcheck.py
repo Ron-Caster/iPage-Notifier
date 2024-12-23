@@ -4,6 +4,7 @@ from email.header import decode_header
 import csv
 import time  # Import time module
 from groq_client import get_groq_response  # Import get_groq_response from groq_client
+from tts import read_aloud  # Import read_aloud from tts_script
 
 def read_credentials(file_path):
     with open(file_path, mode='r') as file:
@@ -35,6 +36,7 @@ def notify_hari(subject, content):
     summary = get_groq_response(conversation_history, user_prompt)
     
     print(summary)  # Print only the summary
+    read_aloud(summary)  # Read the summary aloud
 
 def show_email_content(mail, email_id):
     # Fetch the email by ID
@@ -49,7 +51,7 @@ def show_email_content(mail, email_id):
                 subject = subject.decode(encoding if encoding else "utf-8")
             email_subject = subject  # Store subject for notification
 
-            # If the email message is multipart
+            # If the email message is multipart:
             if msg.is_multipart():
                 for part in msg.walk():
                     content_type = part.get_content_type()
@@ -83,7 +85,7 @@ def main():
             if current_email_id != last_email_id:
                 show_email_content(mail, current_email_id)
                 last_email_id = current_email_id
-        time.sleep(20)  # Wait for 10 seconds before fetching emails again
+        time.sleep(10)  # Wait for 30 seconds before fetching emails again
 
 
 if __name__ == "__main__":
